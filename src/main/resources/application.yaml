@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: land
+  config:
+    import: "optional:configserver:"
+  datasource:
+    url: jdbc:mysql://localhost:3306/land?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
