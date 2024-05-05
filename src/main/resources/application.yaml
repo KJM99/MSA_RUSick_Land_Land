@@ -6,8 +6,8 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/land?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: root
-    password: 1516
+    password: 1234
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
