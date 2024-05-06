@@ -16,6 +16,7 @@ public class LandController {
 
     @PostMapping
     public void addLandbyUserId(
+            // 추후 토큰으로 변환 필요
             @RequestBody LandCreateRequest req,
             @RequestParam Long id){
         landService.addLandbyUserId(req,id);

@@ -48,7 +48,7 @@ public class Land {
     @Column(name="LAND_BUILT_DATE", nullable = false)
     private LocalDateTime landBuiltDate;
 
-    @Column(name="LAND_YN", nullable = false)
+    @Column(name="LAND_YN", nullable = false) @Setter
     private boolean landYN;
 
     //onetomany 관심 매물 아이디

@@ -16,11 +16,11 @@ public record LandCreateRequest(
         String landAddress,
         String landDetailAddress,
         Long landPrice,
-        LocalDateTime landBuiltDate,
-        boolean landYN
+        LocalDateTime landBuiltDate
+
         // 매물 여부는 등록시 true로 변경(서비스에서 동작)
 ) {
-    public Land toEntity(Long userId){
+    public Land toEntity(Long ownerId){
         return Land.builder()
                 .ownerId(ownerId)
                 .ownerName(ownerName)
@@ -32,7 +32,6 @@ public record LandCreateRequest(
                 .landDetailAddress(landDetailAddress)
                 .landPrice(landPrice)
                 .landBuiltDate(landBuiltDate)
-                .landYN(landYN)
                 .build();
     }
 }
