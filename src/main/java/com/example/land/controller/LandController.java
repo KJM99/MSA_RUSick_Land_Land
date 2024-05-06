@@ -2,6 +2,7 @@ package com.example.land.controller;
 
 import com.example.land.LandApplication;
 import com.example.land.dto.LandCreateRequest;
+import com.example.land.dto.SellLogRequest;
 import com.example.land.service.LandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,12 +15,21 @@ public class LandController {
 
     private final LandService landService;
 
+    // 매물 등록
     @PostMapping
     public void addLandbyUserId(
             // 추후 토큰으로 변환 필요
             @RequestBody LandCreateRequest req,
             @RequestParam Long id){
         landService.addLandbyUserId(req,id);
+    }
+
+    // 매물 구매확정 (매물 구매 시 landYN => no, sellLog에 등록)
+    // 구매 확정란에 가격, 거래날짜 now()) 입력
+    @PutMapping
+    public void landConfirm(
+            @RequestBody SellLogRequest req){
+        landService.landConfirm(req);
     }
 
 

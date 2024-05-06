@@ -5,7 +5,7 @@ import com.example.land.global.domain.entity.Land;
 import java.time.LocalDateTime;
 
 public record LandCreateRequest(
-        // ownerId는 컨트롤러의 매개변수로 따로?
+
         Long ownerId,
 
         String ownerName,
