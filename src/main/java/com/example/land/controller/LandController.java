@@ -18,10 +18,9 @@ public class LandController {
     // 매물 등록
     @PostMapping
     public void addLandbyUserId(
-            // 추후 토큰으로 변환 필요
-            @RequestBody LandCreateRequest req,
-            @RequestParam Long id){
-        landService.addLandbyUserId(req,id);
+            // 추후 유저 토큰으로 유저정보 불러오기 필요
+            @RequestBody LandCreateRequest req){
+        landService.addLandbyUserId(req);
     }
 
     // 매물 구매확정 (매물 구매 시 landYN => no, sellLog에 등록)

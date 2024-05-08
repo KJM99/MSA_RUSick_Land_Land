@@ -4,7 +4,7 @@ import com.example.land.dto.LandCreateRequest;
 import com.example.land.dto.SellLogRequest;
 
 public interface LandService {
-    void addLandbyUserId(LandCreateRequest req, Long id);
+    void addLandbyUserId(LandCreateRequest req);
 
     void landConfirm(SellLogRequest req);
 }
