@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: land
+  profiles:
+    active: test
   config:
     import: "optional:configserver:"
   datasource:

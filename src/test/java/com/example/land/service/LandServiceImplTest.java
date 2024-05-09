@@ -32,7 +32,7 @@ class LandServiceImplTest {
             LandCreateRequest landCreateRequest =
                     new LandCreateRequest(
                             "cb158fd1-510c-4b01-a7ec-100a2ab5ed8f",
-                            "hongbeom",
+                            "안홍범",
                             "삼호진덕",
                             1,
                             "100",
@@ -48,6 +48,14 @@ class LandServiceImplTest {
             Optional<Land> land = landRepository.findByOwnerId(UUID.fromString(landCreateRequest.ownerId()));
             assertTrue(land.isPresent());
             assertTrue(land.get().isLandYN());
+        }
+    }
+
+    @Nested
+    class 구매확정{
+        @Test
+        void 성공() {
+
         }
     }
 
