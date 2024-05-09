@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Table(name = "INTERETST_LANDS")
 @Entity
 @Getter
@@ -15,12 +17,12 @@ import lombok.NoArgsConstructor;
 public class InterestLand {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "INTEREST_LAND_ID")
-    private Long id;
+    private UUID id;
 
     @Column(name = "USER_ID", nullable = false)
-    private Long userId;
+    private UUID userId;
 
     //manytoOne 매물 아이디
     @ManyToOne

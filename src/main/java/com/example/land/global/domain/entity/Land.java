@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Table(name = "LANDS")
 @Entity
@@ -14,12 +15,12 @@ import java.util.List;
 @Builder
 public class Land {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     @Column(name = "LAND_ID")
-    private Long id;
+    private UUID id;
 
     @Column(name="OWNER_ID", nullable = false)
-    private Long ownerId;
+    private UUID ownerId;
 
     @Column(name="OWNER_NAME", nullable = false)
     private String ownerName;

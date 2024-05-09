@@ -3,11 +3,11 @@ package com.example.land.dto;
 import com.example.land.global.domain.entity.Land;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record LandCreateRequest(
 
-        Long ownerId,
-
+        String ownerId,
         String ownerName,
         String landName,
         int landCategory,
@@ -20,9 +20,9 @@ public record LandCreateRequest(
 
         // 매물 여부는 등록시 true로 변경(서비스에서 동작)
 ) {
-    public Land toEntity(Long ownerId){
+    public Land toEntity(){
         return Land.builder()
-                .ownerId(ownerId)
+                .ownerId(UUID.fromString(ownerId.toString()))
                 .ownerName(ownerName)
                 .landName(landName)
                 .landCategory(landCategory)
