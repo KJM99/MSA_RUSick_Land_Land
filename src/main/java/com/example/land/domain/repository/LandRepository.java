@@ -1,6 +1,7 @@
-package com.example.land.global.domain.repository;
+package com.example.land.domain.repository;
 
-import com.example.land.global.domain.entity.Land;
+
+import com.example.land.domain.entity.Land;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

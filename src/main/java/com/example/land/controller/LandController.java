@@ -1,11 +1,9 @@
 package com.example.land.controller;
 
-import com.example.land.LandApplication;
 import com.example.land.dto.LandCreateRequest;
 import com.example.land.dto.SellLogRequest;
 import com.example.land.service.LandService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

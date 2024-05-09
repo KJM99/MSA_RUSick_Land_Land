@@ -1,8 +1,8 @@
 package com.example.land.service;
 
+import com.example.land.domain.entity.Land;
+import com.example.land.domain.repository.LandRepository;
 import com.example.land.dto.LandCreateRequest;
-import com.example.land.global.domain.entity.Land;
-import com.example.land.global.domain.repository.LandRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

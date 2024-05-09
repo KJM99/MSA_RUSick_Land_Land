@@ -1,4 +1,4 @@
-package com.example.land.global.domain.entity;
+package com.example.land.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

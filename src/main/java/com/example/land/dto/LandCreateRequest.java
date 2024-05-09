@@ -1,6 +1,7 @@
 package com.example.land.dto;
 
-import com.example.land.global.domain.entity.Land;
+
+import com.example.land.domain.entity.Land;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
