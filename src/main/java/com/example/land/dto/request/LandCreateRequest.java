@@ -1,15 +1,13 @@
-package com.example.land.dto;
+package com.example.land.dto.request;
 
 
 import com.example.land.domain.entity.Land;
+import com.example.land.global.utils.TokenInfo;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record LandCreateRequest(
-
-        String ownerId,
-        String ownerName,
         String landName,
         int landCategory,
         String landArea,
@@ -23,8 +21,6 @@ public record LandCreateRequest(
 ) {
     public Land toEntity(){
         return Land.builder()
-                .ownerId(UUID.fromString(ownerId.toString()))
-                .ownerName(ownerName)
                 .landName(landName)
                 .landCategory(landCategory)
                 .landArea(landArea)

@@ -1,4 +1,4 @@
-package com.example.land.dto;
+package com.example.land.dto.request;
 
 public record InterestLandRequest(
 

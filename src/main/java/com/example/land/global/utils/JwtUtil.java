@@ -8,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final SecretKey secretKey;
 
+    private final SecretKey secretKey;
 
     public TokenInfo parseToken(String token) {
         Claims payload = (Claims) Jwts.parser()
@@ -23,8 +22,6 @@ public class JwtUtil {
                 .getPayload();
         return TokenInfo.fromClaims(payload);
     }
-
-
 
     @Autowired
     public JwtUtil(ServerConfig serverConfig) {
