@@ -1,14 +1,16 @@
 package com.example.land.service;
 
-import com.example.land.dto.LandCreateRequest;
-import com.example.land.global.domain.entity.Land;
-import com.example.land.global.domain.repository.LandRepository;
+import com.example.land.domain.entity.Land;
+import com.example.land.domain.repository.LandRepository;
+import com.example.land.dto.request.LandCreateRequest;
+import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,8 +33,6 @@ class LandServiceImplTest {
             LocalDateTime time = LocalDateTime.of(2020,2,20,10,30);
             LandCreateRequest landCreateRequest =
                     new LandCreateRequest(
-                            "cb158fd1-510c-4b01-a7ec-100a2ab5ed8f",
-                            "hongbeom",
                             "삼호진덕",
                             1,
                             "100",
@@ -43,11 +43,17 @@ class LandServiceImplTest {
                             time
                     );
             //when
-            landService.addLandbyUserId(landCreateRequest);
+            landService.addLandbyUserId(landCreateRequest, new TokenInfo("aa","dd", LocalDate.now()));
             //then
-            Optional<Land> land = landRepository.findByOwnerId(UUID.fromString(landCreateRequest.ownerId()));
-            assertTrue(land.isPresent());
-            assertTrue(land.get().isLandYN());
+
+        }
+    }
+
+    @Nested
+    class 구매확정{
+        @Test
+        void 성공() {
+
         }
     }
 

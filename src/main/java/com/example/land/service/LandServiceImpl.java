@@ -1,17 +1,22 @@
 package com.example.land.service;
 
 
-import com.example.land.dto.LandCreateRequest;
-import com.example.land.dto.SellLogRequest;
+import com.example.land.domain.entity.Land;
+import com.example.land.domain.entity.SellLog;
+import com.example.land.domain.repository.LandRepository;
+import com.example.land.domain.repository.SellLogRepository;
+import com.example.land.dto.request.LandCreateRequest;
+import com.example.land.dto.request.SellLogRequest;
+import com.example.land.dto.response.LandResponse;
 import com.example.land.exception.ExistLandException;
-import com.example.land.global.domain.entity.Land;
-import com.example.land.global.domain.entity.SellLog;
-import com.example.land.global.domain.repository.LandRepository;
-import com.example.land.global.domain.repository.SellLogRepository;
+import com.example.land.exception.NotEqualOwnerException;
+import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,38 +29,53 @@ public class LandServiceImpl implements LandService {
 
     @Override
     @Transactional
-    public void addLandbyUserId(LandCreateRequest req) {
-        Land land = req.toEntity();
-        Optional<Land> landOptional = landRepository.findByOwnerId(land.getOwnerId());
-        if (landOptional.isPresent()) {
+    public void addLandbyUserId(LandCreateRequest req, TokenInfo tokenInfo) {
+        Land land =
+                Land.builder()
+                        .ownerId(UUID.fromString(tokenInfo.id()))
+                        .ownerName(tokenInfo.nickname())
+                        .landName(req.landName())
+                        .landCategory(req.landCategory())
+                        .landArea(req.landArea())
+                        .landDescription(req.landDescription())
+                        .landAddress(req.landAddress())
+                        .landDetailAddress(req.landDetailAddress())
+                        .landPrice(req.landPrice())
+                        .landBuiltDate(req.landBuiltDate())
+                        .build();
+        Optional<Land> lands = landRepository.findById(land.getId());
+        if (lands.isPresent()) {
             throw new ExistLandException(land.getId());
         }
-        land.setLandYN(true);
         landRepository.save(land);
     }
 
     @Override
     @Transactional
-    public void landConfirm(SellLogRequest req) {
+    public void landConfirm(String landid, SellLogRequest req, TokenInfo tokenInfo) {
 
-        // 거래 확정
-        // 현재 유저의 아이디와 매물의 ownerId가 일치하는지 확인 필요(토큰)
-
+        Optional<Land> confirmLand = landRepository.findById(UUID.fromString(landid));
+        String ownerId = String.valueOf(confirmLand.get().getId());
+        if(tokenInfo.id().equals(ownerId)){
+            throw new NotEqualOwnerException(ownerId);
+        }
         SellLog sellLog = req.toEntity();
         sellLogRepository.save(sellLog);
 
-        /*
-            sellLog에 저장되는 landid에 해당하는 land를 불러와서
-            LandYN를 false로 수정한 후
-            다시 db에 저장 => putMapping
-         */
-        String landId = String.valueOf(sellLog.getId());
+        String landId = String.valueOf(sellLog.getLand().getId());
         Land land = landRepository.findById(UUID.fromString(landId))
                 .orElseThrow(() ->
                         new RuntimeException("해당 매물을 찾을 수 없습니다"));
 
         land.setLandYN(false);
         landRepository.save(land);
+    }
 
+    @Override
+    public List<LandResponse> getLandsByUserId(TokenInfo tokenInfo) {
+        return landRepository.findByOwnerId(UUID.fromString(tokenInfo.id()))
+                .stream()
+                .map(LandResponse::from)
+                .toList();
     }
 }
