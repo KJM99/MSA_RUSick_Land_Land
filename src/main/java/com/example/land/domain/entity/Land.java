@@ -2,6 +2,7 @@ package com.example.land.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +51,7 @@ public class Land {
     private LocalDateTime landBuiltDate;
 
     @Column(name="LAND_YN", nullable = false) @Setter
+    @ColumnDefault("true")
     private boolean landYN;
 
     //onetomany 관심 매물 아이디

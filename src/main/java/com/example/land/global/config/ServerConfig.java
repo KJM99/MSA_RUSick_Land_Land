@@ -9,5 +9,4 @@ import org.springframework.stereotype.Component;
 public class ServerConfig {
     @Value("${token.secret}")
     private String secret;
-
 }

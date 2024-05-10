@@ -1,4 +1,4 @@
-package com.example.land.dto;
+package com.example.land.dto.request;
 
 import com.example.land.domain.entity.Land;
 import com.example.land.domain.entity.SellLog;
