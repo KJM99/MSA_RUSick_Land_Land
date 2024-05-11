@@ -1,4 +1,4 @@
-package com.example.land.global.domain.entity;
+package com.example.land.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Table(name = "SELLLOGS")
 @Entity
@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
 public class SellLog {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "SELLLOG_ID")
-    private Long id;
+    private UUID id;
 
     @Column(name= "SELLLOG_DATE", nullable = false)
     private LocalDateTime sellLogDate;

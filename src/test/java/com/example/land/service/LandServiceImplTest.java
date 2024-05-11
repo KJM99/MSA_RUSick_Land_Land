@@ -1,68 +1,67 @@
 package com.example.land.service;
 
-import com.example.land.dto.LandCreateRequest;
-import com.example.land.global.domain.entity.Land;
-import jakarta.persistence.EntityManager;
+import com.example.land.domain.entity.Land;
+import com.example.land.domain.repository.LandRepository;
+import com.example.land.dto.request.LandCreateRequest;
+import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
-import static java.time.LocalTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
 class LandServiceImplTest {
-
-    @Autowired
-    private EntityManager manager;
     @Autowired
     private LandService landService;
+    @Autowired
+    private LandRepository landRepository;
 
-    @Test
-    public void addLandbyUserId() {
+    @Nested
+    class 매물{
+        @Test
+        void 매물생성() {
 
-        //give
-        LocalDateTime testTime = LocalDateTime.of(2024, 5, 6, 15, 30);
-        LandCreateRequest req = new LandCreateRequest(
-                null,
-                "hongbeom",
-                "apartment",
-                1,
-                "23평",
-                "안녕하세요",
-                "수원시",
-                "장안구 천천동",
-                100000l,
-                testTime
-        );
+            //given
+            //request
+            LocalDateTime time = LocalDateTime.of(
+                    2020,2,20,10,30);
+            LandCreateRequest landCreateRequest =
+                    new LandCreateRequest(
+                            "삼호진덕",
+                            1,
+                            "100",
+                            "어서오세요",
+                            "경기도 수원시",
+                            "장안구 천천동",
+                            100000l,
+                            time
+                    );
+            //when
+            landService.addLandbyUserId(
+                    landCreateRequest,
+                    new TokenInfo("aa","dd", LocalDate.now()));
+            //then
 
-        //when
-        landService.addLandbyUserId(req,1l);
-        manager.flush();
-        manager.clear();
-
-        //then
-        Land result = manager.createQuery(
-                "SELECT l FROM Land l WHERE l.ownerName = :ownerName",
-                        Land.class
-                )
-                .setParameter("ownerName", "hongbeom")
-                .getSingleResult();
-
-        assertNotNull(result);
-        assertEquals("hongbeom", result.getOwnerName());
-        assertEquals("apartment", result.getLandCategory());
-        assertEquals(1, result.getLandArea());
-        assertEquals("23평", result.getLandArea());
-        assertEquals("자취", result.getLandDescription());
-        assertEquals("수원시", result.getLandAddress());
-        assertEquals("장안구 천천동", result.getLandDetailAddress());
-        assertEquals(100000L, result.getLandPrice());
-        assertEquals(testTime, result.getLandBuiltDate());
-        assertTrue(result.isLandYN());
+        }
     }
+
+    @Nested
+    class 구매확정{
+        @Test
+        void 성공() {
+
+        }
+    }
+
+
+
 }

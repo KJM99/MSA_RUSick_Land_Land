@@ -1,12 +1,17 @@
 package com.example.land.controller;
 
-import com.example.land.LandApplication;
-import com.example.land.dto.LandCreateRequest;
-import com.example.land.dto.SellLogRequest;
+import com.example.land.dto.request.InterestLandRequest;
+import com.example.land.dto.request.LandCreateRequest;
+import com.example.land.dto.request.SellLogRequest;
+import com.example.land.dto.response.InterestLandResponse;
+import com.example.land.dto.response.LandResponse;
+import com.example.land.global.utils.TokenInfo;
 import com.example.land.service.LandService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,19 +23,68 @@ public class LandController {
     // 매물 등록
     @PostMapping
     public void addLandbyUserId(
-            // 추후 토큰으로 변환 필요
             @RequestBody LandCreateRequest req,
-            @RequestParam Long id){
-        landService.addLandbyUserId(req,id);
+            @AuthenticationPrincipal TokenInfo tokenInfo
+            ){
+        landService.addLandbyUserId(req,tokenInfo);
     }
 
-    // 매물 구매확정 (매물 구매 시 landYN => no, sellLog에 등록)
-    // 구매 확정란에 가격, 거래날짜 now()) 입력
-    @PutMapping
+    // 거래 확정
+    @PutMapping("{landid}")
     public void landConfirm(
-            @RequestBody SellLogRequest req){
-        landService.landConfirm(req);
+            @PathVariable String landid,
+            @RequestBody SellLogRequest req,
+            @AuthenticationPrincipal TokenInfo tokenInfo){
+        landService.landConfirm(landid,req,tokenInfo);
     }
+
+    // 내가 등록한 매물 목록 조회
+    @GetMapping("/mylands")
+    public List<LandResponse> getLandsByUserId(
+            @AuthenticationPrincipal TokenInfo tokenInfo
+    ){
+        return landService.getLandsByUser(tokenInfo);
+    }
+
+    // 매물 목록 조회(기준은 프론트에서 필터로 구현하기)
+    @GetMapping
+    public List<LandResponse> getLandsAll(){
+        return landService.getLandsAll();
+    }
+
+    // 관심 매물 등록
+    @PostMapping("/interests")
+    public void addOrLandInterest(
+            @AuthenticationPrincipal TokenInfo tokenInfo,
+            @RequestBody InterestLandRequest interestLandRequest
+            ){
+        landService.addOrDeleteInterestedLand(tokenInfo,interestLandRequest);
+
+    }
+
+    // 관심 매물 조회
+    @GetMapping("/interests")
+    public List<InterestLandResponse> getLandInterests(
+            @AuthenticationPrincipal TokenInfo tokenInfo
+    ){
+        return landService.getInterestLandByUser(tokenInfo);
+    }
+
+    // 매물 상세 정보
+
+
+
+    // 매물 시세조회
+
+
+
+
+
+
+
+
+
+
 
 
 

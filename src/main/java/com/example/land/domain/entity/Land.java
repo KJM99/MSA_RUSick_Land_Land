@@ -1,10 +1,12 @@
-package com.example.land.global.domain.entity;
+package com.example.land.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Table(name = "LANDS")
 @Entity
@@ -14,12 +16,12 @@ import java.util.List;
 @Builder
 public class Land {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     @Column(name = "LAND_ID")
-    private Long id;
+    private UUID id;
 
     @Column(name="OWNER_ID", nullable = false)
-    private Long ownerId;
+    private UUID ownerId;
 
     @Column(name="OWNER_NAME", nullable = false)
     private String ownerName;
@@ -49,6 +51,7 @@ public class Land {
     private LocalDateTime landBuiltDate;
 
     @Column(name="LAND_YN", nullable = false) @Setter
+    @ColumnDefault("true")
     private boolean landYN;
 
     //onetomany 관심 매물 아이디

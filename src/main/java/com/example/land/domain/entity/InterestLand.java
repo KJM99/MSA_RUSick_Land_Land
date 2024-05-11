@@ -1,10 +1,12 @@
-package com.example.land.global.domain.entity;
+package com.example.land.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Table(name = "INTERETST_LANDS")
 @Entity
@@ -15,12 +17,12 @@ import lombok.NoArgsConstructor;
 public class InterestLand {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "INTEREST_LAND_ID")
-    private Long id;
+    private UUID id;
 
     @Column(name = "USER_ID", nullable = false)
-    private Long userId;
+    private UUID userId;
 
     //manytoOne 매물 아이디
     @ManyToOne
