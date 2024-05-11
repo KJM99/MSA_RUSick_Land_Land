@@ -29,8 +29,11 @@ class LandServiceImplTest {
     class 매물{
         @Test
         void 매물생성() {
+
             //given
-            LocalDateTime time = LocalDateTime.of(2020,2,20,10,30);
+            //request
+            LocalDateTime time = LocalDateTime.of(
+                    2020,2,20,10,30);
             LandCreateRequest landCreateRequest =
                     new LandCreateRequest(
                             "삼호진덕",
@@ -43,7 +46,9 @@ class LandServiceImplTest {
                             time
                     );
             //when
-            landService.addLandbyUserId(landCreateRequest, new TokenInfo("aa","dd", LocalDate.now()));
+            landService.addLandbyUserId(
+                    landCreateRequest,
+                    new TokenInfo("aa","dd", LocalDate.now()));
             //then
 
         }
