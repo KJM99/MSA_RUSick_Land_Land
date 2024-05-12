@@ -19,8 +19,11 @@ public record LandCreateRequest(
 
         // 매물 여부는 등록시 true로 변경(서비스에서 동작)
 ) {
-    public Land toEntity(){
+    public Land toEntity(TokenInfo tokenInfo){
         return Land.builder()
+                .id(UUID.randomUUID())
+                .ownerId(UUID.fromString(tokenInfo.id()))
+                .ownerName(tokenInfo.nickname())
                 .landName(landName)
                 .landCategory(landCategory)
                 .landArea(landArea)
