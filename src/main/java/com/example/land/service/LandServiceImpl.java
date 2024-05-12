@@ -11,6 +11,7 @@ import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
+import com.example.land.dto.response.SellLogResponse;
 import com.example.land.exception.ExistLandException;
 import com.example.land.exception.NotEqualOwnerException;
 import com.example.land.global.utils.TokenInfo;
@@ -44,6 +45,19 @@ public class LandServiceImpl implements LandService {
         landRepository.save(land);
     }
 
+    // 매물 삭제
+    @Override
+    public void deleteLand(String landid, TokenInfo tokenInfo) {
+        Land land = landRepository.findById(UUID.fromString(landid)).orElseThrow(()
+                -> new IllegalArgumentException("존재하지 않음"));
+
+        if(!tokenInfo.id().equals(String.valueOf(land.getOwnerId()))){
+            throw new NotEqualOwnerException(String.valueOf(land.getOwnerId()));
+        }
+        landRepository.delete(land);
+    }
+
+
     //매물 거래 확정
     @Override
     @Transactional
@@ -59,16 +73,6 @@ public class LandServiceImpl implements LandService {
         sellLogRepository.save(req.toEntity());
         land.setLandYN(false);
         landRepository.save(land);
-    }
-
-    //내가 등록한 매물 목록 조회
-    @Override
-    public List<LandResponse> getLandsByUser(TokenInfo tokenInfo) {
-        return landRepository
-                .findByOwnerId(UUID.fromString(tokenInfo.id()))
-                .stream()
-                .map(LandResponse::from)
-                .toList();
     }
 
     //매물 목록 조회
@@ -123,14 +127,41 @@ public class LandServiceImpl implements LandService {
         for (InterestLand interestLand : interestLandList) {
             interestLandResponseList.add(InterestLandResponse.from(interestLand.getLand()));
         }
-
         return interestLandResponseList;
     }
 
-
-
     //매물 시세조회
+    @Override
+    public List<SellLogResponse> getLandPrice(String landid) {
+        return sellLogRepository
+                .findByLandId(UUID.fromString(landid))
+                .stream()
+                .map(SellLogResponse::from)
+                .toList();
+    }
 
+    //내가 등록한 매물 목록 조회
+    @Override
+    public List<LandResponse> getLandsByUser(TokenInfo tokenInfo) {
+        return landRepository
+                .findByOwnerId(UUID.fromString(tokenInfo.id()))
+                .stream()
+                .map(LandResponse::from)
+                .toList();
+    }
 
-
+    // 내가 등록한 매물 시세 조회
+    @Override
+    public List<SellLogResponse> getMyLandPrice(TokenInfo tokenInfo) {
+        List<Land> lands = landRepository.findByOwnerId(UUID.fromString(tokenInfo.id()));
+        List<SellLogResponse> sellLogResponses = new ArrayList<>();
+        for (Land land : lands) {
+            List<SellLogResponse> sellLogResponse = sellLogRepository.findByLandId(land.getId())
+                    .stream()
+                    .map(SellLogResponse::from)
+                    .toList();
+            sellLogResponses.addAll(sellLogResponse);
+        }
+        return sellLogResponses;
+    }
 }

@@ -8,6 +8,7 @@ import com.example.land.dto.request.InterestLandRequest;
 import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
+import com.example.land.dto.response.SellLogResponse;
 import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Nested;
@@ -272,19 +273,94 @@ class LandServiceImplTest {
                     .build();
             Land savedLand = landRepository.save(land);
             String landId = savedLand.getId().toString();
+
             InterestLandRequest interestLandRequest = new InterestLandRequest(landId, usertokenInfo);
 
             //when
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
             List<InterestLandResponse> myLand = landService.getInterestLandByUser(usertokenInfo);
             System.out.println(myLand.get(0));
+
             //then
             assertEquals(1,
                     interestLandRepository.findByUserId(UUID.fromString(userId)).size());
-            assertEquals(land.getLandArea(), myLand.get(0).landArea());
+            assertEquals(savedLand.getLandArea(), myLand.get(0).landArea());
+        }
+    }
+
+    @Nested
+    class 매물시세{
+        @Test
+        void 매물시세조회(){
+            //given
+            LocalDate time = LocalDate.of(2020, 2, 20);
+            String ownerId = UUID.randomUUID().toString();
+            Land land = Land.builder()
+                    .id(UUID.randomUUID())
+                    .ownerId(UUID.fromString(ownerId))
+                    .ownerName("testNickname")
+                    .landName("삼호진덕")
+                    .landCategory(1)
+                    .landArea("100")
+                    .landDescription("어서오세요")
+                    .landAddress("경기도 수원시")
+                    .landDetailAddress("장안구 천천동")
+                    .landPrice(100000l)
+                    .landBuiltDate(LocalDateTime.now())
+                    .landYN(true)
+                    .build();
+            Land savedLand = landRepository.save(land);
+            TokenInfo tokenInfo = new TokenInfo(ownerId, "testNickname", time);
+            SellLogRequest sellLogRequest = new SellLogRequest(
+                    savedLand.getId().toString(),
+                    LocalDateTime.now(),
+                    100000l
+            );
+            landService.landConfirm(
+                    savedLand.getId().toString(), sellLogRequest, tokenInfo);
+            //when
+            List<SellLogResponse> sellLog =
+                landService.getLandPrice(savedLand.getId().toString());
+            //then
+            assertEquals(100000l, sellLog.get(0).price());
+            assertEquals(savedLand.getId().toString(), sellLog.get(0).landId());
         }
 
-
+        @Test
+        void 내매물시세조회(){
+            //given
+            LocalDate time = LocalDate.of(2020, 2, 20);
+            String ownerId = UUID.randomUUID().toString();
+            Land land = Land.builder()
+                    .id(UUID.randomUUID())
+                    .ownerId(UUID.fromString(ownerId))
+                    .ownerName("testNickname")
+                    .landName("삼호진덕")
+                    .landCategory(1)
+                    .landArea("100")
+                    .landDescription("어서오세요")
+                    .landAddress("경기도 수원시")
+                    .landDetailAddress("장안구 천천동")
+                    .landPrice(100000l)
+                    .landBuiltDate(LocalDateTime.now())
+                    .landYN(true)
+                    .build();
+            Land savedLand = landRepository.save(land);
+            TokenInfo tokenInfo = new TokenInfo(ownerId, "testNickname", time);
+            SellLogRequest sellLogRequest = new SellLogRequest(
+                    savedLand.getId().toString(),
+                    LocalDateTime.now(),
+                    100000l
+            );
+            landService.landConfirm(
+                    savedLand.getId().toString(), sellLogRequest, tokenInfo);
+            //when
+            List<SellLogResponse> sellLog =
+                    landService.getMyLandPrice(tokenInfo);
+            //then
+            assertEquals(100000l, sellLog.get(0).price());
+            assertEquals(savedLand.getId().toString(), sellLog.get(0).landId());
+        }
     }
 
 
