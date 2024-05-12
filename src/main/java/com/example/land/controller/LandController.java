@@ -5,6 +5,7 @@ import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
+import com.example.land.dto.response.SellLogResponse;
 import com.example.land.global.utils.TokenInfo;
 import com.example.land.service.LandService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,15 @@ public class LandController {
             @AuthenticationPrincipal TokenInfo tokenInfo
             ){
         landService.addLandbyUserId(req,tokenInfo);
+    }
+
+    // 매물 삭제
+    @DeleteMapping("{landid}")
+    public void deleteLand(
+            @PathVariable String landid,
+            @AuthenticationPrincipal TokenInfo tokenInfo
+    ){
+        landService.deleteLand(landid,tokenInfo);
     }
 
     // 거래 확정
@@ -52,7 +62,7 @@ public class LandController {
         return landService.getLandsAll();
     }
 
-    // 관심 매물 등록
+    // 관심 매물 등록 및 삭제
     @PostMapping("/interests")
     public void addOrLandInterest(
             @AuthenticationPrincipal TokenInfo tokenInfo,
@@ -79,6 +89,20 @@ public class LandController {
     }
 
     // 매물 시세조회
+    @GetMapping("/price/{landid}")
+    public List<SellLogResponse> getLandPrice(
+            @PathVariable String landid
+    ){
+        return landService.getLandPrice(landid);
+    }
+
+    // 내가 등록한 매물 시세 조회
+    @GetMapping("/price/mylands")
+    public List<SellLogResponse> getMyLandPrice(
+            @AuthenticationPrincipal TokenInfo tokenInfo
+    ){
+        return landService.getMyLandPrice(tokenInfo);
+    }
 
 
 

@@ -5,6 +5,7 @@ import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
+import com.example.land.dto.response.SellLogResponse;
 import com.example.land.global.utils.TokenInfo;
 
 import java.util.List;
@@ -23,4 +24,10 @@ public interface LandService {
     List<InterestLandResponse> getInterestLandByUser(TokenInfo tokenInfo);
 
     LandResponse getLandDetail(String landid);
+
+    List<SellLogResponse> getLandPrice(String landid);
+
+    void deleteLand(String landid, TokenInfo tokenInfo);
+
+    List<SellLogResponse> getMyLandPrice(TokenInfo tokenInfo);
 }
