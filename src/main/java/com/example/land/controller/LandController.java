@@ -71,10 +71,19 @@ public class LandController {
     }
 
     // 매물 상세 정보
-
-
+    @GetMapping("/{landid}")
+    public LandResponse getLandDetail(
+            @PathVariable String landid
+    ){
+        return landService.getLandDetail(landid);
+    }
 
     // 매물 시세조회
+
+
+
+
+
 
 
 

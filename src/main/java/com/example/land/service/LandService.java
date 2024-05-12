@@ -21,4 +21,6 @@ public interface LandService {
     void addOrDeleteInterestedLand(TokenInfo tokenInfo, InterestLandRequest interestLandRequest);
 
     List<InterestLandResponse> getInterestLandByUser(TokenInfo tokenInfo);
+
+    LandResponse getLandDetail(String landid);
 }
