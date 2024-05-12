@@ -31,7 +31,7 @@ public class LandController {
     }
 
     // 매물 삭제
-    @DeleteMapping("{landid}")
+    @DeleteMapping("/{landid}")
     public void deleteLand(
             @PathVariable String landid,
             @AuthenticationPrincipal TokenInfo tokenInfo
@@ -40,7 +40,7 @@ public class LandController {
     }
 
     // 거래 확정
-    @PutMapping("{landid}")
+    @PutMapping("/{landid}")
     public void landConfirm(
             @PathVariable String landid,
             @RequestBody SellLogRequest req,
@@ -97,7 +97,7 @@ public class LandController {
     }
 
     // 내가 등록한 매물 시세 조회
-    @GetMapping("/price/mylands")
+    @GetMapping("/mylands/price")
     public List<SellLogResponse> getMyLandPrice(
             @AuthenticationPrincipal TokenInfo tokenInfo
     ){
