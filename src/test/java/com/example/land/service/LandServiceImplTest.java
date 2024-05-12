@@ -1,5 +1,6 @@
 package com.example.land.service;
 
+import com.example.land.domain.entity.InterestLand;
 import com.example.land.domain.entity.Land;
 import com.example.land.domain.repository.InterestLandRepository;
 import com.example.land.domain.repository.LandRepository;
@@ -40,9 +41,7 @@ class LandServiceImplTest {
     class 매물{
         @Test
         void 매물생성() {
-
             //given
-            //request
             LocalDateTime time = LocalDateTime.of(
                     2020,2,20,10,30);
             LandCreateRequest landCreateRequest =
@@ -57,14 +56,14 @@ class LandServiceImplTest {
                             time
                     );
             //when
-            String randomUUID = UUID.randomUUID().toString();
+            String userId = UUID.randomUUID().toString();
+            TokenInfo tokenInfo = new TokenInfo(userId,"dd", LocalDate.now());
             landService.addLandbyUserId(
-                    landCreateRequest,
-                    new TokenInfo(randomUUID,"dd", LocalDate.now()));
+                    landCreateRequest, tokenInfo);
             //then
-            assertNotNull(landRepository.findById(UUID.fromString(randomUUID)));
-
-
+            assertEquals("삼호진덕",landRepository
+                    .findByOwnerId(UUID.fromString(userId)).get(0).getLandName());
+            assertNotNull(landRepository.findById(UUID.fromString(userId)));
         }
         @Test
         void 이미존재(){
@@ -91,6 +90,34 @@ class LandServiceImplTest {
             Optional<Land> optionalLand = landRepository.findById(UUID.fromString(randomUUID));
             //then
             assertFalse(optionalLand.isPresent());
+        }
+
+        @Test
+        void 매물삭제(){
+            //given
+            LocalDateTime time = LocalDateTime.of(
+                    2020,2,20,10,30);
+            LandCreateRequest landCreateRequest =
+                    new LandCreateRequest(
+                            "삼호진덕",
+                            1,
+                            "100",
+                            "어서오세요",
+                            "경기도 수원시",
+                            "장안구 천천동",
+                            100000l,
+                            time
+                    );
+            //when
+            String userId = UUID.randomUUID().toString();
+            TokenInfo tokenInfo = new TokenInfo(userId,"dd", LocalDate.now());
+            landService.addLandbyUserId(
+                    landCreateRequest, tokenInfo);
+            landService.deleteLand(
+                    landRepository.findByOwnerId(UUID.fromString(userId)).get(0).getId().toString(),
+                    tokenInfo);
+            //then
+            assertTrue(landRepository.findByOwnerId(UUID.fromString(userId)).isEmpty());
         }
     }
 
@@ -236,17 +263,27 @@ class LandServiceImplTest {
                     .build();
             Land savedLand = landRepository.save(land);
             String landId = savedLand.getId().toString();
-            InterestLandRequest interestLandRequest = new InterestLandRequest(landId, usertokenInfo);
+            System.out.println(landId);
+            InterestLandRequest interestLandRequest
+                    = new InterestLandRequest(landId, usertokenInfo);
 
             //when
-            landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
-
             //then
-            assertEquals(1,
-                    interestLandRepository.findByUserId(UUID.fromString(userId)).size());
-            assertEquals(savedLand.getId(),
-                    interestLandRepository.findByLandAndUserId(savedLand, UUID.fromString(usertokenInfo.id()))
-                            .getLand().getId());
+            landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
+            assertEquals(1, interestLandRepository.findAll().size());
+            assertEquals("삼호진덕",
+                    interestLandRepository.findAll().get(0).getLand().getLandName());
+
+            InterestLand interestLand =
+                    interestLandRepository.findByLandAndUserid(savedLand, UUID.fromString(userId));
+
+            // 이미 관심매물에 등록되어있는 경우 삭제 테스트
+            landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
+            assertEquals(0, interestLandRepository.findAll().size());
+
+            //land id는 나오는데 land의 정보는 나오지 않음
+            System.out.println(interestLand.getLand().getId());
+            System.out.println(interestLand.getLand().getLandName());
         }
 
         @Test
@@ -273,17 +310,16 @@ class LandServiceImplTest {
                     .build();
             Land savedLand = landRepository.save(land);
             String landId = savedLand.getId().toString();
-
-            InterestLandRequest interestLandRequest = new InterestLandRequest(landId, usertokenInfo);
-
+            InterestLandRequest interestLandRequest =
+                    new InterestLandRequest(landId, usertokenInfo);
             //when
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
-            List<InterestLandResponse> myLand = landService.getInterestLandByUser(usertokenInfo);
-            System.out.println(myLand.get(0));
+            List<InterestLandResponse> myLand =
+                    landService.getInterestLandByUser(usertokenInfo);
 
             //then
             assertEquals(1,
-                    interestLandRepository.findByUserId(UUID.fromString(userId)).size());
+                    interestLandRepository.findAllByUserId(UUID.fromString(userId)).size());
             assertEquals(savedLand.getLandArea(), myLand.get(0).landArea());
         }
     }
@@ -362,7 +398,4 @@ class LandServiceImplTest {
             assertEquals(savedLand.getId().toString(), sellLog.get(0).landId());
         }
     }
-
-
-
 }

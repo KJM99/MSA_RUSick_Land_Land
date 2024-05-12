@@ -1,7 +1,6 @@
 package com.example.land.dto.response;
 
 import com.example.land.domain.entity.InterestLand;
-import com.example.land.domain.entity.Land;
 
 public record InterestLandResponse(
     String landName,
@@ -10,13 +9,13 @@ public record InterestLandResponse(
     String landArea,
     String landDescription
 ) {
-    public static InterestLandResponse from(Land land){
+    public static InterestLandResponse from(InterestLand interestLand){
         return new InterestLandResponse(
-            land.getLandName(),
-            land.getLandPrice(),
-            land.getLandCategory(),
-            land.getLandArea(),
-            land.getLandDescription()
+            interestLand.getLand().getLandName(),
+            interestLand.getLand().getLandPrice(),
+            interestLand.getLand().getLandCategory(),
+            interestLand.getLand().getLandArea(),
+            interestLand.getLand().getLandDescription()
         );
     }
 }

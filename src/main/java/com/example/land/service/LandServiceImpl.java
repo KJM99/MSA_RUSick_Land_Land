@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class LandServiceImpl implements LandService {
     private final SellLogRepository sellLogRepository;
     private final InterestLandRepository interestLandRepository;
 
-    //매물 생성
+    // 매물 생성
     @Override
     @Transactional
     public void addLandbyUserId(LandCreateRequest req, TokenInfo tokenInfo) {
@@ -58,7 +57,7 @@ public class LandServiceImpl implements LandService {
     }
 
 
-    //매물 거래 확정
+    // 매물 거래 확정
     @Override
     @Transactional
     public void landConfirm(
@@ -75,7 +74,7 @@ public class LandServiceImpl implements LandService {
         landRepository.save(land);
     }
 
-    //매물 목록 조회
+    // 매물 목록 조회
     @Override
     public List<LandResponse> getLandsAll() {
         return landRepository
@@ -93,7 +92,7 @@ public class LandServiceImpl implements LandService {
                 .orElseThrow(() -> new ExistLandException(UUID.fromString(landid)));
     }
 
-    //관심 매물 등록
+    // 관심 매물 등록
     @Override
     @Transactional
     public void addOrDeleteInterestedLand(
@@ -101,7 +100,7 @@ public class LandServiceImpl implements LandService {
         Optional<Land> byId = landRepository.findById(UUID.fromString(req.landId()));
         Land land = byId.orElseThrow(() -> new IllegalArgumentException("뭔가 잘못됨"));
         InterestLand interestLand =
-                interestLandRepository.findByLandAndUserId(land, UUID.fromString(req.tokenInfo().id()));
+                interestLandRepository.findByLandAndUserid(land, UUID.fromString(req.tokenInfo().id()));
         if(interestLand != null){
             interestLandRepository.delete(interestLand);
         }else{
@@ -109,28 +108,28 @@ public class LandServiceImpl implements LandService {
         }
     }
 
-    //내 관심 매물 조회
+    // 내 관심 매물 조회
     /*
         interestLandRepository에서 userId로 조회한 후,
         조회한 land의 id를 다시 landRepository에서 조회하여
         InterestLandResponse로 변환하여 반환
+        테스트 실패
      */
     @Override
     public List<InterestLandResponse> getInterestLandByUser(TokenInfo tokenInfo) {
         List<InterestLand> interestLandList
-                = interestLandRepository.findByUserId(UUID.fromString(tokenInfo.id()));
-
+                = interestLandRepository.findAllByUserId(UUID.fromString(tokenInfo.id()));
         List<InterestLandResponse> interestLandResponseList = new ArrayList<>();
 
         if(interestLandList.isEmpty()) throw new IllegalArgumentException("리스트 없음");
 
         for (InterestLand interestLand : interestLandList) {
-            interestLandResponseList.add(InterestLandResponse.from(interestLand.getLand()));
+            interestLandResponseList.add(InterestLandResponse.from(interestLand));
         }
         return interestLandResponseList;
     }
 
-    //매물 시세조회
+    // 매물 시세조회
     @Override
     public List<SellLogResponse> getLandPrice(String landid) {
         return sellLogRepository
@@ -140,7 +139,7 @@ public class LandServiceImpl implements LandService {
                 .toList();
     }
 
-    //내가 등록한 매물 목록 조회
+    // 내가 등록한 매물 목록 조회
     @Override
     public List<LandResponse> getLandsByUser(TokenInfo tokenInfo) {
         return landRepository
