@@ -171,8 +171,8 @@ public class LandServiceImpl implements LandService {
     }
 
     @Override
-    public Map<UUID, Integer> getLandsByUserIdForISale(Set<UUID> idList) {
-        Map<UUID, Integer> map = new HashMap<>();
+    public Map<UUID, Long> getLandsByUserIdForISale(Set<UUID> idList) {
+        Map<UUID, Long> map = new HashMap<>();
 
         // 집계 함수 사용
         List<LandToISaleResponse> byOwnerId = landRepository.findByOwnerIdIn(idList);

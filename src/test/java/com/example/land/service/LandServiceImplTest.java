@@ -4,7 +4,6 @@ import com.example.land.domain.entity.InterestLand;
 import com.example.land.domain.entity.Land;
 import com.example.land.domain.repository.InterestLandRepository;
 import com.example.land.domain.repository.LandRepository;
-import com.example.land.domain.repository.SellLogRepository;
 import com.example.land.dto.request.InterestLandRequest;
 import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
@@ -36,9 +35,7 @@ class LandServiceImplTest {
     @Autowired
     private InterestLandRepository interestLandRepository;
     @Autowired
-    private SellLogRepository sellLogRepository;
-    @Autowired
-    private EntityManager em;
+    private EntityManager entityManager;
 
     @Nested
     class 매물{
@@ -56,7 +53,7 @@ class LandServiceImplTest {
                             "경기도 수원시",
                             "장안구 천천동",
                             100000l,
-                            time
+                            time.toString()
                     );
             //when
             String userId = UUID.randomUUID().toString();
@@ -83,7 +80,7 @@ class LandServiceImplTest {
                             "경기도 수원시",
                             "장안구 천천동",
                             100000l,
-                            time
+                            time.toString()
                     );
             //when
             String randomUUID = UUID.randomUUID().toString();
@@ -109,7 +106,7 @@ class LandServiceImplTest {
                             "경기도 수원시",
                             "장안구 천천동",
                             100000l,
-                            time
+                            time.toString()
                     );
             //when
             String userId = UUID.randomUUID().toString();
@@ -275,8 +272,8 @@ class LandServiceImplTest {
             //when
             //then
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
-            em.flush();
-            em.clear();
+            entityManager.flush();
+            entityManager.clear();
             InterestLand interestLand =
                     interestLandRepository.findByLandAndUserid(savedLand, UUID.fromString(userId));
 
@@ -317,8 +314,8 @@ class LandServiceImplTest {
                     new InterestLandRequest(landId, usertokenInfo);
             //when
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
-            em.flush();
-            em.clear();
+            entityManager.flush();
+            entityManager.clear();
             List<InterestLandResponse> myLand =
                     landService.getInterestLandByUser(usertokenInfo);
             //then
