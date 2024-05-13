@@ -97,8 +97,9 @@ public class LandServiceImpl implements LandService {
     @Transactional
     public void addOrDeleteInterestedLand(
             TokenInfo tokenInfo, InterestLandRequest req) {
+
         Optional<Land> byId = landRepository.findById(UUID.fromString(req.landId()));
-        Land land = byId.orElseThrow(() -> new IllegalArgumentException("뭔가 잘못됨"));
+        Land land = byId.orElseThrow(() -> new IllegalArgumentException("매물 없음"));
         InterestLand interestLand =
                 interestLandRepository.findByLandAndUserid(land, UUID.fromString(req.tokenInfo().id()));
         if(interestLand != null){
@@ -106,6 +107,7 @@ public class LandServiceImpl implements LandService {
         }else{
             interestLandRepository.save(req.toEntity());
         }
+
     }
 
     // 내 관심 매물 조회
@@ -119,6 +121,7 @@ public class LandServiceImpl implements LandService {
     public List<InterestLandResponse> getInterestLandByUser(TokenInfo tokenInfo) {
         List<InterestLand> interestLandList
                 = interestLandRepository.findAllByUserId(UUID.fromString(tokenInfo.id()));
+
         List<InterestLandResponse> interestLandResponseList = new ArrayList<>();
 
         if(interestLandList.isEmpty()) throw new IllegalArgumentException("리스트 없음");

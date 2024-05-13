@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class InterestLand {
     private UUID userId;
 
     //manytoOne 매물 아이디
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="LAND_ID", nullable = false)
     private Land land;
 }
