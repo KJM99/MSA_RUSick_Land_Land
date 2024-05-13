@@ -283,7 +283,6 @@ class LandServiceImplTest {
             assertEquals(1, interestLandRepository.findAll().size());
             assertEquals(savedLand.getId(), interestLand.getLand().getId());
 
-            // 이미 관심매물에 등록되어있는 경우 삭제 테스트
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
             assertEquals(0, interestLandRepository.findAll().size());
         }

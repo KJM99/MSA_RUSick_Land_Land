@@ -14,6 +14,8 @@ import com.example.land.dto.response.LandResponse;
 import com.example.land.dto.response.SellLogResponse;
 import com.example.land.exception.ExistLandException;
 import com.example.land.exception.NotEqualOwnerException;
+import com.example.land.exception.NotExistInterestLand;
+import com.example.land.exception.NotExistLandException;
 import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +41,7 @@ public class LandServiceImpl implements LandService {
         Land land = req.toEntity(tokenInfo);
         Optional<Land> lands = landRepository.findById(land.getId());
         if (lands.isPresent()) {
-            throw new ExistLandException(land.getId());
+            throw new ExistLandException();
         }
         landRepository.save(land);
     }
@@ -48,7 +50,7 @@ public class LandServiceImpl implements LandService {
     @Override
     public void deleteLand(String landid, TokenInfo tokenInfo) {
         Land land = landRepository.findById(UUID.fromString(landid)).orElseThrow(()
-                -> new IllegalArgumentException("존재하지 않음"));
+                -> new NotExistLandException());
 
         if(!tokenInfo.id().equals(String.valueOf(land.getOwnerId()))){
             throw new NotEqualOwnerException(String.valueOf(land.getOwnerId()));
@@ -64,7 +66,7 @@ public class LandServiceImpl implements LandService {
             String landid, SellLogRequest req, TokenInfo tokenInfo
     ) {
         Land land = landRepository.findById(UUID.fromString(landid)).orElseThrow(()
-                -> new IllegalArgumentException("존재하지 않음"));
+                -> new NotExistLandException());
 
         if(!tokenInfo.id().equals(String.valueOf(land.getOwnerId()))){
             throw new NotEqualOwnerException(String.valueOf(land.getOwnerId()));
@@ -89,7 +91,7 @@ public class LandServiceImpl implements LandService {
     public LandResponse getLandDetail(String landid) {
         return landRepository.findById(UUID.fromString(landid))
                 .map(LandResponse::from)
-                .orElseThrow(() -> new ExistLandException(UUID.fromString(landid)));
+                .orElseThrow(() -> new NotExistLandException());
     }
 
     // 관심 매물 등록
@@ -99,7 +101,7 @@ public class LandServiceImpl implements LandService {
             TokenInfo tokenInfo, InterestLandRequest req) {
 
         Optional<Land> byId = landRepository.findById(UUID.fromString(req.landId()));
-        Land land = byId.orElseThrow(() -> new IllegalArgumentException("매물 없음"));
+        Land land = byId.orElseThrow(() -> new NotExistLandException());
         InterestLand interestLand =
                 interestLandRepository.findByLandAndUserid(land, UUID.fromString(req.tokenInfo().id()));
         if(interestLand != null){
@@ -111,12 +113,6 @@ public class LandServiceImpl implements LandService {
     }
 
     // 내 관심 매물 조회
-    /*
-        interestLandRepository에서 userId로 조회한 후,
-        조회한 land의 id를 다시 landRepository에서 조회하여
-        InterestLandResponse로 변환하여 반환
-        테스트 실패
-     */
     @Override
     public List<InterestLandResponse> getInterestLandByUser(TokenInfo tokenInfo) {
         List<InterestLand> interestLandList
@@ -124,7 +120,7 @@ public class LandServiceImpl implements LandService {
 
         List<InterestLandResponse> interestLandResponseList = new ArrayList<>();
 
-        if(interestLandList.isEmpty()) throw new IllegalArgumentException("리스트 없음");
+        if(interestLandList.isEmpty()) throw new NotExistInterestLand();
 
         for (InterestLand interestLand : interestLandList) {
             interestLandResponseList.add(InterestLandResponse.from(interestLand));
