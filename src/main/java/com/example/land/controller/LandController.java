@@ -6,8 +6,12 @@ import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
 import com.example.land.dto.response.SellLogResponse;
+import com.example.land.dto.response.LandToISaleResponse;
 import com.example.land.global.utils.TokenInfo;
 import com.example.land.service.LandService;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -78,6 +82,12 @@ public class LandController {
             @AuthenticationPrincipal TokenInfo tokenInfo
     ){
         return landService.getInterestLandByUser(tokenInfo);
+
+    }
+
+    @GetMapping("/owner/landCount")
+    public Map<UUID, Integer> getLandsByUserIdForISale(Set<UUID> idList){
+        return landService.getLandsByUserIdForISale(idList);
     }
 
     // 매물 상세 정보

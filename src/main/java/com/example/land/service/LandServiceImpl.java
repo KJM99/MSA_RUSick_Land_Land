@@ -11,6 +11,7 @@ import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
+import com.example.land.dto.response.LandToISaleResponse;
 import com.example.land.dto.response.SellLogResponse;
 import com.example.land.exception.ExistLandException;
 import com.example.land.exception.NotEqualOwnerException;
@@ -18,7 +19,13 @@ import com.example.land.exception.NotExistInterestLand;
 import com.example.land.exception.NotExistLandException;
 import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -161,5 +168,24 @@ public class LandServiceImpl implements LandService {
             sellLogResponses.addAll(sellLogResponse);
         }
         return sellLogResponses;
+    }
+
+    @Override
+    public Map<UUID, Integer> getLandsByUserIdForISale(Set<UUID> idList) {
+        Map<UUID, Integer> map = new HashMap<>();
+
+        // 집계 함수 사용
+        List<LandToISaleResponse> byOwnerId = landRepository.findByOwnerIdIn(idList);
+        for(LandToISaleResponse item : byOwnerId) {
+            map.put(item.ownerId(), item.count());
+        }
+
+        // 리스트 사용
+        // for (UUID id : idList) {
+        //     List<Land> byOwnerId = landRepository.findByOwnerId(id);
+        //     map.put(id, byOwnerId.size());
+        // }
+
+        return map;
     }
 }
