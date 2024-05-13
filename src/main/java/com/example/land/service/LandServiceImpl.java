@@ -8,11 +8,18 @@ import com.example.land.domain.repository.SellLogRepository;
 import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.LandResponse;
+import com.example.land.dto.response.LandToISaleResponse;
 import com.example.land.exception.ExistLandException;
 import com.example.land.exception.NotEqualOwnerException;
 import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +29,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+
 public class LandServiceImpl implements LandService {
 
     private final LandRepository landRepository;
@@ -30,6 +38,7 @@ public class LandServiceImpl implements LandService {
     @Override
     @Transactional
     public void addLandbyUserId(LandCreateRequest req, TokenInfo tokenInfo) {
+
         Land land =
                 Land.builder()
                         .ownerId(UUID.fromString(tokenInfo.id()))
@@ -41,7 +50,7 @@ public class LandServiceImpl implements LandService {
                         .landAddress(req.landAddress())
                         .landDetailAddress(req.landDetailAddress())
                         .landPrice(req.landPrice())
-                        .landBuiltDate(req.landBuiltDate())
+                        .landBuiltDate(LocalDateTime.parse(req.landBuiltDate()))
                         .build();
         Optional<Land> lands = landRepository.findById(land.getId());
         if (lands.isPresent()) {
@@ -72,10 +81,29 @@ public class LandServiceImpl implements LandService {
     }
 
     @Override
-    public List<LandResponse> getLandsByUserId(TokenInfo tokenInfo) {
-        return landRepository.findByOwnerId(UUID.fromString(tokenInfo.id()))
+    public List<LandResponse> getLandsByUserId(UUID ownerId) {
+        return landRepository.findByOwnerId(ownerId)
                 .stream()
                 .map(LandResponse::from)
                 .toList();
+    }
+
+    @Override
+    public Map<UUID, Integer> getLandsByUserIdForISale(Set<UUID> idList) {
+        Map<UUID, Integer> map = new HashMap<>();
+
+        // 집계 함수 사용
+        List<LandToISaleResponse> byOwnerId = landRepository.findCountByOwnerId(idList);
+        for(LandToISaleResponse item : byOwnerId) {
+            map.put(item.ownerId(), item.count());
+        }
+
+        // 리스트 사용
+        // for (UUID id : idList) {
+        //     List<Land> byOwnerId = landRepository.findByOwnerId(id);
+        //     map.put(id, byOwnerId.size());
+        // }
+
+        return map;
     }
 }

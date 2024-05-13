@@ -28,13 +28,13 @@ public class CustomSecurityConfig {
             corsConfiguration.setAllowedOrigins(List.of("*"));
             return corsConfiguration;
         }));
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests(req ->
-                req.requestMatchers("/api/v1/land/*")
+                req.requestMatchers("/api/v1/lands/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
         );
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
