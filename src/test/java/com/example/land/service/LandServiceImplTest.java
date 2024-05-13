@@ -11,6 +11,7 @@ import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.SellLogResponse;
 import com.example.land.global.utils.TokenInfo;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,8 @@ class LandServiceImplTest {
     private InterestLandRepository interestLandRepository;
     @Autowired
     private SellLogRepository sellLogRepository;
+    @Autowired
+    private EntityManager em;
 
     @Nested
     class 매물{
@@ -183,6 +186,7 @@ class LandServiceImplTest {
             TokenInfo tokenInfo = new TokenInfo(ownerId, "testNickname", time);
             //then
             assertEquals(1, landService.getLandsByUser(tokenInfo).size());
+            assertEquals("삼호진덕", landService.getLandsByUser(tokenInfo).get(0).landName());
         }
         @Test
         void 매물목록조회(){
@@ -207,6 +211,7 @@ class LandServiceImplTest {
             //when
             //then
             assertEquals(1, landService.getLandsAll().size());
+            assertEquals("삼호진덕", landService.getLandsAll().get(0).landName());
         }
 
         @Test
@@ -263,37 +268,36 @@ class LandServiceImplTest {
                     .build();
             Land savedLand = landRepository.save(land);
             String landId = savedLand.getId().toString();
-            System.out.println(landId);
+            System.out.println(savedLand.getLandName());
             InterestLandRequest interestLandRequest
                     = new InterestLandRequest(landId, usertokenInfo);
 
             //when
             //then
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
-            assertEquals(1, interestLandRepository.findAll().size());
-            assertEquals("삼호진덕",
-                    interestLandRepository.findAll().get(0).getLand().getLandName());
-
+            em.flush();
+            em.clear();
             InterestLand interestLand =
                     interestLandRepository.findByLandAndUserid(savedLand, UUID.fromString(userId));
+
+            assertEquals(1, interestLandRepository.findAll().size());
+            assertEquals(savedLand.getId(), interestLand.getLand().getId());
 
             // 이미 관심매물에 등록되어있는 경우 삭제 테스트
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
             assertEquals(0, interestLandRepository.findAll().size());
-
-            //land id는 나오는데 land의 정보는 나오지 않음
-            System.out.println(interestLand.getLand().getId());
-            System.out.println(interestLand.getLand().getLandName());
         }
 
-        @Test
+
         // 내 관심 매물 조회
+        @Test
+        @Transactional
         void 내관심매물조회(){
             //given
-            LocalDate time = LocalDate.of(2020, 2, 20);
+            LocalDate birthday = LocalDate.of(1998, 2, 16);
             String ownerId = UUID.randomUUID().toString();
             String userId = UUID.randomUUID().toString();
-            TokenInfo usertokenInfo = new TokenInfo(userId, "testNickname", time);
+            TokenInfo usertokenInfo = new TokenInfo(userId, "testNickname", birthday);
             Land land = Land.builder()
                     .id(UUID.randomUUID())
                     .ownerId(UUID.fromString(ownerId))
@@ -314,12 +318,14 @@ class LandServiceImplTest {
                     new InterestLandRequest(landId, usertokenInfo);
             //when
             landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
+            em.flush();
+            em.clear();
             List<InterestLandResponse> myLand =
                     landService.getInterestLandByUser(usertokenInfo);
-
             //then
             assertEquals(1,
                     interestLandRepository.findAllByUserId(UUID.fromString(userId)).size());
+            assertEquals(savedLand.getId().toString(), myLand.get(0).id());
             assertEquals(savedLand.getLandArea(), myLand.get(0).landArea());
         }
     }
