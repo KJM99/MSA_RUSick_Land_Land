@@ -86,7 +86,7 @@ public class LandController {
     }
 
     @GetMapping("/owner/landCount")
-    public Map<UUID, Integer> getLandsByUserIdForISale(Set<UUID> idList){
+    public Map<UUID, Long> getLandsByUserIdForISale(Set<UUID> idList){
         return landService.getLandsByUserIdForISale(idList);
     }
 

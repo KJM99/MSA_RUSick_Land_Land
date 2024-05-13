@@ -1,6 +1,7 @@
 package com.example.land.domain.repository;
 
 import com.example.land.domain.entity.Land;
+import com.example.land.dto.response.LandToISaleResponse;
 import jakarta.transaction.Transactional;
 import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.jupiter.api.Test;
@@ -83,11 +84,11 @@ class LandRepositoryTest {
         set.add(owner3);
         set.add(UUID.randomUUID());
         set.add(UUID.randomUUID());
-        List<Object[]> list = landRepository.findByOwnerIdIn(set);
+        List<LandToISaleResponse> list = landRepository.findByOwnerIdIn(set);
         System.out.println(set);
         System.out.println(list.size());
-        for(Object[] o : list) {
-            System.out.println(o[0] + " " + o[1]);
+        for(LandToISaleResponse o : list) {
+            System.out.println(o.ownerId() + " " + o.count());
         }
         List<Land> ll = landRepository.findAll();
         System.out.println(ll.size());
