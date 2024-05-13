@@ -19,4 +19,23 @@ class JwtUtilTest {
         assertEquals(secret,serverConfig.getSecret());
         System.out.println(serverConfig.getSecret());
     }
+
+//    class JwtUtilTest {
+//        private final ServerConfig serverConfig = new ServerConfig("asjdkfnof4241085931nklasf1n1032nlkdsfmi1m2k2", 600000L);
+//        private final JwtUtil jwtUtil = new JwtUtil(serverConfig);
+//        @Test
+//        void createToken() {
+//            User user = User.builder()
+//                    .id(UUID.randomUUID())
+//                    .email("a@a.com")
+//                    .nickname("aa")
+//                    .gender("남")
+//                    .birthDay(LocalDate.now())
+//                    .build();
+//
+//            String token = jwtUtil.createToken(user);
+//            System.out.println(token);
+//            assertNotNull(token);
+//
+//        }
 }

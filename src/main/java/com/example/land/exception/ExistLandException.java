@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class ExistLandException
         extends IllegalArgumentException {
-    public ExistLandException(UUID id) {
+    public ExistLandException() {
         super("land already exist");
     }
 }
