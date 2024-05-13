@@ -2,6 +2,7 @@ package com.example.land.global.utils;
 
 import com.example.land.global.config.ServerConfig;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,17 @@ public class JwtUtil {
                 .parse(token)
                 .getPayload();
         return TokenInfo.fromClaims(payload);
+    }
+    public boolean validateToken(String token) {
+        try{
+            Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parse(token);
+        }catch (JwtException e){
+            return false;
+        }
+        return true;
     }
 
     @Autowired
