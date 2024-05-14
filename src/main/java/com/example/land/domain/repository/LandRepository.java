@@ -21,6 +21,6 @@ public interface LandRepository
             "FROM Land l " +
             "WHERE l.ownerId IN :list " +
             "GROUP BY l.ownerId")
-    List<LandToISaleResponse> findByOwnerIdIn(@Param("list") Set<UUID> list);
+    List<LandToISaleResponse> findByOwnerIdIn(@Param("list") List<UUID> list);
 
 }
