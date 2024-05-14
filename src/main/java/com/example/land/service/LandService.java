@@ -35,5 +35,5 @@ public interface LandService {
 
     List<SellLogResponse> getMyLandPrice(TokenInfo tokenInfo);
 
-    Map<UUID, Long> getLandsByUserIdForISale(Set<UUID> idList);
+    Map<UUID, Long> getLandsByUserIdForISale(List<UUID> idList);
 }

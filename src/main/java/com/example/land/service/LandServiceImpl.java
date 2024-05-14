@@ -3,6 +3,7 @@ package com.example.land.service;
 
 import com.example.land.domain.entity.InterestLand;
 import com.example.land.domain.entity.Land;
+import com.example.land.domain.entity.SellLog;
 import com.example.land.domain.repository.InterestLandRepository;
 import com.example.land.domain.repository.LandRepository;
 import com.example.land.domain.repository.SellLogRepository;
@@ -78,7 +79,15 @@ public class LandServiceImpl implements LandService {
         if(!tokenInfo.id().equals(String.valueOf(land.getOwnerId()))){
             throw new NotEqualOwnerException(String.valueOf(land.getOwnerId()));
         }
-        sellLogRepository.save(req.toEntity());
+        SellLog sellLog = SellLog.builder()
+            .id(UUID.fromString(tokenInfo.id()))
+            .land(Land.builder()
+                .id(UUID.fromString(landid))
+                .build())
+            .sellLogDate(LocalDateTime.now())
+            .sellLogPrice(req.sellLogPrice())
+            .build();
+        sellLogRepository.save(sellLog);
         land.setLandYN(false);
         landRepository.save(land);
     }
@@ -110,11 +119,11 @@ public class LandServiceImpl implements LandService {
         Optional<Land> byId = landRepository.findById(UUID.fromString(req.landId()));
         Land land = byId.orElseThrow(() -> new NotExistLandException());
         InterestLand interestLand =
-                interestLandRepository.findByLandAndUserid(land, UUID.fromString(req.tokenInfo().id()));
+                interestLandRepository.findByLandAndUserid(land, UUID.fromString(tokenInfo.id()));
         if(interestLand != null){
             interestLandRepository.delete(interestLand);
         }else{
-            interestLandRepository.save(req.toEntity());
+            interestLandRepository.save(req.toEntity(tokenInfo));
         }
 
     }
@@ -171,7 +180,7 @@ public class LandServiceImpl implements LandService {
     }
 
     @Override
-    public Map<UUID, Long> getLandsByUserIdForISale(Set<UUID> idList) {
+    public Map<UUID, Long> getLandsByUserIdForISale(List<UUID> idList) {
         Map<UUID, Long> map = new HashMap<>();
 
         // 집계 함수 사용

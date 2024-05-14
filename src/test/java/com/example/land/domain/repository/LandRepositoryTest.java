@@ -3,6 +3,7 @@ package com.example.land.domain.repository;
 import com.example.land.domain.entity.Land;
 import com.example.land.dto.response.LandToISaleResponse;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,9 @@ class LandRepositoryTest {
         landRepository.save(land9);
         landRepository.save(land10);
 
-        Set<UUID> set = new HashSet<>();
+        List<UUID> set = new ArrayList<>(
+
+        );
         set.add(owner1);
         set.add(owner2);
         set.add(owner3);
@@ -86,6 +89,7 @@ class LandRepositoryTest {
         set.add(UUID.randomUUID());
         List<LandToISaleResponse> list = landRepository.findByOwnerIdIn(set);
         System.out.println(set);
+        System.out.println(list);
         System.out.println(list.size());
         for(LandToISaleResponse o : list) {
             System.out.println(o.ownerId() + " " + o.count());
