@@ -16,8 +16,6 @@ public record LandCreateRequest(
         String landDetailAddress,
         Long landPrice,
         String landBuiltDate
-
-        // 매물 여부는 등록시 true로 변경(서비스에서 동작)
 ) {
     public Land toEntity(TokenInfo tokenInfo){
         return Land.builder()

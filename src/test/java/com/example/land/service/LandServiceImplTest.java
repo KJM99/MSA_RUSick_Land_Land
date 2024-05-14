@@ -152,7 +152,6 @@ class LandServiceImplTest {
             //when
             landService.landConfirm(landId, sellLogRequest, tokenInfo);
             //then
-            System.out.println(landRepository.findById(UUID.fromString(landId)).get().isLandYN());
             assertFalse(landRepository.findById(UUID.fromString(landId)).get().isLandYN());
         }
     }

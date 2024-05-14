@@ -6,7 +6,6 @@ import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
 import com.example.land.dto.response.SellLogResponse;
-import com.example.land.dto.response.LandToISaleResponse;
 import com.example.land.global.utils.TokenInfo;
 import com.example.land.service.LandService;
 import java.util.Map;
@@ -113,23 +112,4 @@ public class LandController {
     ){
         return landService.getMyLandPrice(tokenInfo);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
