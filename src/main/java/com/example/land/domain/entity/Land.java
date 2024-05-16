@@ -1,6 +1,7 @@
 package com.example.land.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.ws.rs.DefaultValue;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -21,9 +22,11 @@ public class Land {
     private UUID id;
 
     @Column(name="OWNER_ID", nullable = false)
+    @Setter
     private UUID ownerId;
 
     @Column(name="OWNER_NAME", nullable = false)
+    @Setter
     private String ownerName;
 
     @Column(name="LAND_NAME", nullable = false)
@@ -52,7 +55,8 @@ public class Land {
 
     @Column(name="LAND_YN", nullable = false) @Setter
     @ColumnDefault("true")
-    private boolean landYN;
+    @Builder.Default
+    private Boolean landYN = true;
 
     //onetomany 관심 매물 아이디
     @OneToMany(mappedBy = "land", cascade = CascadeType.REMOVE)

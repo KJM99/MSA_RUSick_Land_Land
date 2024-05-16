@@ -5,9 +5,14 @@ import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
+import com.example.land.dto.response.LandToISaleResponse;
+import com.example.land.dto.response.SellLogResponse;
 import com.example.land.global.utils.TokenInfo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public interface LandService {
     void addLandbyUserId(LandCreateRequest req, TokenInfo tokenInfo);
@@ -21,4 +26,14 @@ public interface LandService {
     void addOrDeleteInterestedLand(TokenInfo tokenInfo, InterestLandRequest interestLandRequest);
 
     List<InterestLandResponse> getInterestLandByUser(TokenInfo tokenInfo);
+
+    LandResponse getLandDetail(String landid);
+
+    List<SellLogResponse> getLandPrice(String landid);
+
+    void deleteLand(String landid, TokenInfo tokenInfo);
+
+    List<SellLogResponse> getMyLandPrice(TokenInfo tokenInfo);
+
+    Map<UUID, Long> getLandsByUserIdForISale(List<UUID> idList);
 }

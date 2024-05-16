@@ -21,19 +21,12 @@ public class CustomSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(c->c.configurationSource(request -> {
-            CorsConfiguration corsConfiguration = new CorsConfiguration();
-            corsConfiguration.addAllowedOrigin("*");
-            corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-            corsConfiguration.setAllowedOrigins(List.of("*"));
-            return corsConfiguration;
-        }));
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.authorizeRequests(req ->
-                req.requestMatchers("/api/v1/land/*")
+        http.authorizeHttpRequests(req ->
+                req.requestMatchers("/api/v1/lands", "/api/v1/lands/{landId}", "/api/v1/lands/price/{landId}", "/api/v1/lands/owner/landCount")
                         .permitAll()
                         .anyRequest()
-                        .authenticated()
+                        .permitAll()
         );
         return http.build();
     }
