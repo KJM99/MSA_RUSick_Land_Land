@@ -22,9 +22,11 @@ public class Land {
     private UUID id;
 
     @Column(name="OWNER_ID", nullable = false)
+    @Setter
     private UUID ownerId;
 
     @Column(name="OWNER_NAME", nullable = false)
+    @Setter
     private String ownerName;
 
     @Column(name="LAND_NAME", nullable = false)

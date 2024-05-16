@@ -5,7 +5,7 @@ import com.example.land.domain.entity.SellLog;
 import java.time.LocalDateTime;
 
 public record SellLogResponse(
-        LocalDateTime sellLogDate,
+        LocalDateTime sellDate,
         Long price
 ) {
     public static SellLogResponse from(SellLog sellLog) {
