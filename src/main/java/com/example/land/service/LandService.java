@@ -8,6 +8,7 @@ import com.example.land.dto.response.LandResponse;
 import com.example.land.dto.response.LandToISaleResponse;
 import com.example.land.dto.response.SellLogResponse;
 import com.example.land.global.utils.TokenInfo;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public interface LandService {
 
     List<LandResponse> getLandsAll();
 
-    void addOrDeleteInterestedLand(TokenInfo tokenInfo, InterestLandRequest interestLandRequest);
+    void addOrDeleteInterestedLand(InterestLandRequest req);
 
     List<InterestLandResponse> getInterestLandByUser(TokenInfo tokenInfo);
 
@@ -36,4 +37,6 @@ public interface LandService {
     List<SellLogResponse> getMyLandPrice(TokenInfo tokenInfo);
 
     Map<UUID, Long> getLandsByUserIdForISale(List<UUID> idList);
+
+    Boolean getInterest(String landId, TokenInfo tokenInfo);
 }

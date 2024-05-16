@@ -2,6 +2,8 @@ package com.example.land.domain.repository;
 
 import com.example.land.domain.entity.Land;
 import com.example.land.dto.response.LandToISaleResponse;
+import com.example.land.global.utils.JwtUtil;
+import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import jdk.swing.interop.SwingInterOpUtils;
@@ -22,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class LandRepositoryTest {
     @Autowired
     private LandRepository landRepository;
+    @Autowired
+    private JwtUtil jwtUtil;
+
     void 초기_데이터_입력(){
         UUID owner1 = UUID.randomUUID();
         UUID owner2 = UUID.randomUUID();
@@ -46,6 +51,19 @@ class LandRepositoryTest {
         landRepository.save(land4);
         landRepository.save(land5);
         landRepository.save(land6);
+    }
+
+    @Test
+    void 내_매물_리스트_조회(){
+        //given
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImZmOWEwMmY1LTIwMTMtNDExMS04MmY3LTUxMjk2NTBlYjhhMCIsIm5pY2tuYW1lIjoidGVzdDMiLCJiaXJ0aERheSI6IjIwMjQtMDUtMTQiLCJleHAiOjE3MTYyNjMxNzN9.UT5NhS1cURx3ffBv2QfwIMwCtZFSP5Q7n8TAIJttyU0";
+        TokenInfo tokenInfo = jwtUtil.parseToken(token);
+        //when
+        List<Land> list1 = landRepository.findByOwnerId(UUID.fromString(tokenInfo.id()));
+        List<Land> list2 = landRepository.findByOwnerIdAndLandYNIsTrue(UUID.fromString(tokenInfo.id()));
+        //then
+        System.out.println(list1.size());
+        System.out.println(list2.size());
     }
 
     @Test

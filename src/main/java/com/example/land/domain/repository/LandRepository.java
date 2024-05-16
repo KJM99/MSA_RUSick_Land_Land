@@ -16,11 +16,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface LandRepository
         extends JpaRepository<Land, UUID> {
+
     List<Land> findByOwnerId(UUID ownerId);
     @Query("SELECT new com.example.land.dto.response.LandToISaleResponse(l.ownerId, count(*))  " +
             "FROM Land l " +
             "WHERE l.ownerId IN :list " +
             "GROUP BY l.ownerId")
     List<LandToISaleResponse> findByOwnerIdIn(@Param("list") List<UUID> list);
-
+    List<Land> findByOwnerIdAndLandYNIsTrue(UUID ownerId);
+    Land findOneByLandAddressAndLandDetailAddress(String landAddress, String landDetailAddress);
 }

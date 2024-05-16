@@ -6,7 +6,6 @@ import com.example.land.dto.request.SellLogRequest;
 import com.example.land.dto.response.InterestLandResponse;
 import com.example.land.dto.response.LandResponse;
 import com.example.land.dto.response.SellLogResponse;
-import com.example.land.dto.response.LandToISaleResponse;
 import com.example.land.global.utils.TokenInfo;
 import com.example.land.service.LandService;
 import java.util.Map;
@@ -35,7 +34,7 @@ public class LandController {
     }
 
     // 매물 삭제
-    @DeleteMapping("/{landId}")
+    @PostMapping("/{landId}")
     public void deleteLand(
             @PathVariable String landId,
             @AuthenticationPrincipal TokenInfo tokenInfo
@@ -63,18 +62,26 @@ public class LandController {
     // 매물 목록 조회(기준은 프론트에서 필터로 구현하기)
     @GetMapping
     public List<LandResponse> getLandsAll(){
-        return landService.getLandsAll();
+        List<LandResponse> landResponses = landService.getLandsAll();
+        return landResponses;
     }
 
     // 관심 매물 등록 및 삭제
-    @PostMapping("/interests")
+    @PostMapping("{landId}/interests")
     public void addOrLandInterest(
-            @AuthenticationPrincipal TokenInfo tokenInfo,
-            @RequestBody InterestLandRequest interestLandRequest
+            @PathVariable String landId,
+            @AuthenticationPrincipal TokenInfo tokenInfo
             ){
-        landService.addOrDeleteInterestedLand(tokenInfo,interestLandRequest);
+        InterestLandRequest interestLandRequest = new InterestLandRequest(landId,tokenInfo);
+        landService.addOrDeleteInterestedLand(interestLandRequest);
 
     }
+
+    @GetMapping("{landId}/interests")
+    public Boolean getInterest(@PathVariable("landId") String landId, @AuthenticationPrincipal TokenInfo tokenInfo){
+        return landService.getInterest(landId, tokenInfo);
+    }
+
 
     // 관심 매물 조회
     @GetMapping("/interests")
@@ -113,23 +120,4 @@ public class LandController {
     ){
         return landService.getMyLandPrice(tokenInfo);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

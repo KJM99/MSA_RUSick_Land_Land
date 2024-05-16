@@ -1,6 +1,7 @@
 package com.example.land.service;
 
 
+import com.example.land.api.ApiAuth;
 import com.example.land.domain.entity.InterestLand;
 import com.example.land.domain.entity.Land;
 import com.example.land.domain.entity.SellLog;
@@ -10,23 +11,19 @@ import com.example.land.domain.repository.SellLogRepository;
 import com.example.land.dto.request.InterestLandRequest;
 import com.example.land.dto.request.LandCreateRequest;
 import com.example.land.dto.request.SellLogRequest;
-import com.example.land.dto.response.InterestLandResponse;
-import com.example.land.dto.response.LandResponse;
-import com.example.land.dto.response.LandToISaleResponse;
-import com.example.land.dto.response.SellLogResponse;
+import com.example.land.dto.response.*;
 import com.example.land.exception.ExistLandException;
 import com.example.land.exception.NotEqualOwnerException;
 import com.example.land.exception.NotExistInterestLand;
 import com.example.land.exception.NotExistLandException;
 import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,21 +38,33 @@ public class LandServiceImpl implements LandService {
     private final LandRepository landRepository;
     private final SellLogRepository sellLogRepository;
     private final InterestLandRepository interestLandRepository;
+    private final ApiAuth apiAuth;
 
     // 매물 생성
     @Override
     @Transactional
     public void addLandbyUserId(LandCreateRequest req, TokenInfo tokenInfo) {
-        Land land = req.toEntity(tokenInfo);
-        Optional<Land> lands = landRepository.findById(land.getId());
-        if (lands.isPresent()) {
-            throw new ExistLandException();
+        Land land = landRepository.findOneByLandAddressAndLandDetailAddress(req.landAddress(), req.landDetailAddress());
+        if (land != null) {
+            if (UUID.fromString(tokenInfo.id()) == land.getOwnerId()) {
+                land.setLandYN(true);
+            } else {
+                throw new NotEqualOwnerException(tokenInfo.id());
+            }
+        } else {
+            landRepository.save(req.toEntity(tokenInfo));
         }
-        landRepository.save(land);
+//        Land land = req.toEntity(tokenInfo);
+//        Optional<Land> lands = landRepository.findById(land.getId());
+//        if (lands.isPresent()) {
+//            throw new ExistLandException();
+//        }
+//        landRepository.save(land);
     }
 
     // 매물 삭제
     @Override
+    @Transactional
     public void deleteLand(String landid, TokenInfo tokenInfo) {
         Land land = landRepository.findById(UUID.fromString(landid)).orElseThrow(()
                 -> new NotExistLandException());
@@ -63,7 +72,7 @@ public class LandServiceImpl implements LandService {
         if(!tokenInfo.id().equals(String.valueOf(land.getOwnerId()))){
             throw new NotEqualOwnerException(String.valueOf(land.getOwnerId()));
         }
-        landRepository.delete(land);
+        land.setLandYN(false);
     }
 
 
@@ -73,23 +82,21 @@ public class LandServiceImpl implements LandService {
     public void landConfirm(
             String landid, SellLogRequest req, TokenInfo tokenInfo
     ) {
+        UserInfoResponse response = apiAuth.getUserIdByEmail(req.buyerEmail());
+        if(response == null){
+            throw new RuntimeException("구매자의 이메일을 확인해주세요");
+        }
         Land land = landRepository.findById(UUID.fromString(landid)).orElseThrow(()
                 -> new NotExistLandException());
 
         if(!tokenInfo.id().equals(String.valueOf(land.getOwnerId()))){
             throw new NotEqualOwnerException(String.valueOf(land.getOwnerId()));
         }
-        SellLog sellLog = SellLog.builder()
-            .id(UUID.fromString(tokenInfo.id()))
-            .land(Land.builder()
-                .id(UUID.fromString(landid))
-                .build())
-            .sellLogDate(LocalDateTime.now())
-            .sellLogPrice(req.sellLogPrice())
-            .build();
+        SellLog sellLog = req.toEntity(landid, tokenInfo);
         sellLogRepository.save(sellLog);
-        land.setLandYN(false);
-        landRepository.save(land);
+//        land.setLandYN(false);
+        land.setOwnerId(response.userId());
+        land.setOwnerName(response.userName());
     }
 
     // 매물 목록 조회
@@ -114,16 +121,16 @@ public class LandServiceImpl implements LandService {
     @Override
     @Transactional
     public void addOrDeleteInterestedLand(
-            TokenInfo tokenInfo, InterestLandRequest req) {
-
+            InterestLandRequest req) {
         Optional<Land> byId = landRepository.findById(UUID.fromString(req.landId()));
         Land land = byId.orElseThrow(() -> new NotExistLandException());
+
         InterestLand interestLand =
-                interestLandRepository.findByLandAndUserid(land, UUID.fromString(tokenInfo.id()));
+                interestLandRepository.findByLandAndUserid(land, UUID.fromString(req.tokenInfo().id()));
         if(interestLand != null){
             interestLandRepository.delete(interestLand);
         }else{
-            interestLandRepository.save(req.toEntity(tokenInfo));
+            interestLandRepository.save(req.toEntity());
         }
 
     }
@@ -148,7 +155,7 @@ public class LandServiceImpl implements LandService {
     @Override
     public List<SellLogResponse> getLandPrice(String landid) {
         return sellLogRepository
-                .findByLandId(UUID.fromString(landid))
+                .findByLandIdOrderBySellLogDateAsc(UUID.fromString(landid))
                 .stream()
                 .map(SellLogResponse::from)
                 .toList();
@@ -158,7 +165,7 @@ public class LandServiceImpl implements LandService {
     @Override
     public List<LandResponse> getLandsByUser(TokenInfo tokenInfo) {
         return landRepository
-                .findByOwnerId(UUID.fromString(tokenInfo.id()))
+                .findByOwnerIdAndLandYNIsTrue(UUID.fromString(tokenInfo.id()))
                 .stream()
                 .map(LandResponse::from)
                 .toList();
@@ -196,5 +203,14 @@ public class LandServiceImpl implements LandService {
         // }
 
         return map;
+    }
+
+    @Override
+    public Boolean getInterest(String landId, TokenInfo tokenInfo) {
+        Optional<Land> byId = landRepository.findById(UUID.fromString(landId));
+        Land land = byId.orElseThrow(() -> new IllegalArgumentException("landId is not exist"));
+        InterestLand byLandAndUserId = interestLandRepository.findByLandAndUserid(land, UUID.fromString(tokenInfo.id()));
+
+        return byLandAndUserId != null;
     }
 }
