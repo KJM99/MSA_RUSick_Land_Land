@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface SellLogRepository
         extends JpaRepository<SellLog, UUID> {
     List<SellLog> findByLandId(UUID landId);
+    List<SellLog> findByLandIdOrderBySellLogDateAsc(UUID landId);
 }

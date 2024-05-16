@@ -34,21 +34,21 @@ public class LandController {
     }
 
     // 매물 삭제
-    @DeleteMapping("/{landid}")
+    @PostMapping("/{landId}")
     public void deleteLand(
-            @PathVariable String landid,
+            @PathVariable String landId,
             @AuthenticationPrincipal TokenInfo tokenInfo
     ){
-        landService.deleteLand(landid,tokenInfo);
+        landService.deleteLand(landId,tokenInfo);
     }
 
     // 거래 확정
-    @PutMapping("/{landid}")
+    @PutMapping("/{landId}")
     public void landConfirm(
-            @PathVariable String landid,
+            @PathVariable String landId,
             @RequestBody SellLogRequest req,
             @AuthenticationPrincipal TokenInfo tokenInfo){
-        landService.landConfirm(landid,req,tokenInfo);
+        landService.landConfirm(landId,req,tokenInfo);
     }
 
     // 내가 등록한 매물 목록 조회
@@ -84,25 +84,25 @@ public class LandController {
 
     }
 
-    @GetMapping("/owner/landCount")
-    public Map<UUID, Long> getLandsByUserIdForISale(Set<UUID> idList){
+    @PostMapping("/owner/landCount")
+    public Map<UUID, Long> getLandsByUserIdForISale(@RequestBody List<UUID> idList){
         return landService.getLandsByUserIdForISale(idList);
     }
 
     // 매물 상세 정보
-    @GetMapping("/{landid}")
+    @GetMapping("/{landId}")
     public LandResponse getLandDetail(
-            @PathVariable String landid
+            @PathVariable String landId
     ){
-        return landService.getLandDetail(landid);
+        return landService.getLandDetail(landId);
     }
 
     // 매물 시세조회
-    @GetMapping("/price/{landid}")
+    @GetMapping("/price/{landId}")
     public List<SellLogResponse> getLandPrice(
-            @PathVariable String landid
+            @PathVariable String landId
     ){
-        return landService.getLandPrice(landid);
+        return landService.getLandPrice(landId);
     }
 
     // 내가 등록한 매물 시세 조회
