@@ -63,16 +63,18 @@ public class LandController {
     // 매물 목록 조회(기준은 프론트에서 필터로 구현하기)
     @GetMapping
     public List<LandResponse> getLandsAll(){
-        return landService.getLandsAll();
+        List<LandResponse> landResponses = landService.getLandsAll();
+        return landResponses;
     }
 
     // 관심 매물 등록 및 삭제
-    @PostMapping("/interests")
+    @PostMapping("/interests/{id}")
     public void addOrLandInterest(
-            @AuthenticationPrincipal TokenInfo tokenInfo,
-            @RequestBody InterestLandRequest interestLandRequest
+            @PathVariable String id,
+            @AuthenticationPrincipal TokenInfo tokenInfo
             ){
-        landService.addOrDeleteInterestedLand(tokenInfo,interestLandRequest);
+        InterestLandRequest interestLandRequest = new InterestLandRequest(id,tokenInfo);
+        landService.addOrDeleteInterestedLand(interestLandRequest);
 
     }
 

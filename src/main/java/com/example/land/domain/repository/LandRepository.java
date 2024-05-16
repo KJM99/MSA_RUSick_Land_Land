@@ -16,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface LandRepository
         extends JpaRepository<Land, UUID> {
+
     List<Land> findByOwnerId(UUID ownerId);
     @Query("SELECT new com.example.land.dto.response.LandToISaleResponse(l.ownerId, count(*))  " +
             "FROM Land l " +

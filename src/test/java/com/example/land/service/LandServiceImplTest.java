@@ -273,11 +273,11 @@ class LandServiceImplTest {
             String landId = savedLand.getId().toString();
             System.out.println(savedLand.getLandName());
             InterestLandRequest interestLandRequest
-                    =  new InterestLandRequest(landId);
+                    =  new InterestLandRequest(landId, usertokenInfo);
 
             //when
             //then
-            landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
+            landService.addOrDeleteInterestedLand(interestLandRequest);
             entityManager.flush();
             entityManager.clear();
             InterestLand interestLand =
@@ -286,7 +286,7 @@ class LandServiceImplTest {
             assertEquals(1, interestLandRepository.findAll().size());
             assertEquals(savedLand.getId(), interestLand.getLand().getId());
 
-            landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
+            landService.addOrDeleteInterestedLand(interestLandRequest);
             assertEquals(0, interestLandRepository.findAll().size());
         }
 
@@ -317,9 +317,9 @@ class LandServiceImplTest {
             Land savedLand = landRepository.save(land);
             String landId = savedLand.getId().toString();
             InterestLandRequest interestLandRequest =
-                    new InterestLandRequest(landId);
+                    new InterestLandRequest(landId, usertokenInfo);
             //when
-            landService.addOrDeleteInterestedLand(usertokenInfo, interestLandRequest);
+            landService.addOrDeleteInterestedLand(interestLandRequest);
             entityManager.flush();
             entityManager.clear();
             List<InterestLandResponse> myLand =

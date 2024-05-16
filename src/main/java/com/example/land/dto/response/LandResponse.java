@@ -15,7 +15,8 @@ public record LandResponse(
     String landAddress,
     String landDetailAddress,
     long landPrice,
-    LocalDateTime landBuiltDate
+    LocalDateTime landBuiltDate,
+    boolean landYN
 ) {
     public static LandResponse from(Land land) {
         return new LandResponse(
@@ -28,7 +29,8 @@ public record LandResponse(
                 land.getLandAddress(),
                 land.getLandDetailAddress(),
                 land.getLandPrice(),
-                land.getLandBuiltDate()
+                land.getLandBuiltDate(),
+                land.getLandYN()
         );
     }
 

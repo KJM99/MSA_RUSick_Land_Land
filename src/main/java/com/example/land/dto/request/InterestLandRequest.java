@@ -7,9 +7,9 @@ import com.example.land.global.utils.TokenInfo;
 import java.util.UUID;
 
 public record InterestLandRequest(
-    String landId/*, TokenInfo tokenInfo*/
+    String landId, TokenInfo tokenInfo
 ) {
-    public InterestLand toEntity(TokenInfo tokenInfo){
+    public InterestLand toEntity(){
         return InterestLand.builder()
                 .userId(UUID.fromString(tokenInfo.id()))
                 .land(Land.builder()

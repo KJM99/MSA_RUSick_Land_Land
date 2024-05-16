@@ -20,13 +20,12 @@ import com.example.land.exception.NotExistInterestLand;
 import com.example.land.exception.NotExistLandException;
 import com.example.land.global.utils.TokenInfo;
 import jakarta.transaction.Transactional;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -114,16 +113,16 @@ public class LandServiceImpl implements LandService {
     @Override
     @Transactional
     public void addOrDeleteInterestedLand(
-            TokenInfo tokenInfo, InterestLandRequest req) {
-
+            InterestLandRequest req) {
         Optional<Land> byId = landRepository.findById(UUID.fromString(req.landId()));
         Land land = byId.orElseThrow(() -> new NotExistLandException());
+
         InterestLand interestLand =
-                interestLandRepository.findByLandAndUserid(land, UUID.fromString(tokenInfo.id()));
+                interestLandRepository.findByLandAndUserid(land, UUID.fromString(req.tokenInfo().id()));
         if(interestLand != null){
             interestLandRepository.delete(interestLand);
         }else{
-            interestLandRepository.save(req.toEntity(tokenInfo));
+            interestLandRepository.save(req.toEntity());
         }
 
     }
