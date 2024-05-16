@@ -22,7 +22,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String bearerToken = request.getHeader("Authorization");
+        System.out.println("aaaa");
+        if (bearerToken == null) System.out.println("dasdasd");
         if (bearerToken != null && bearerToken.startsWith("Bearer ") && jwtUtil.validateToken(bearerToken.substring(7))) {
+            System.out.println("bbb");
             String token = bearerToken.substring(7);
             TokenInfo tokenInfo = jwtUtil.parseToken(token);
             UsernamePasswordAuthenticationToken authenticationToken =

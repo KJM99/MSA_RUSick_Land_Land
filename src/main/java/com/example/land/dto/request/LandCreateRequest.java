@@ -31,7 +31,7 @@ public record LandCreateRequest(
                 .landAddress(landAddress)
                 .landDetailAddress(landDetailAddress)
                 .landPrice(landPrice)
-                .landBuiltDate(LocalDateTime.parse(landBuiltDate))
+                .landBuiltDate(LocalDateTime.parse(landBuiltDate+"T00:00:00"))
                 .build();
     }
 }

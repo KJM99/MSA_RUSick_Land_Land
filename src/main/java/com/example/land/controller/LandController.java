@@ -35,7 +35,7 @@ public class LandController {
     }
 
     // 매물 삭제
-    @DeleteMapping("/{landId}")
+    @PostMapping("/{landId}")
     public void deleteLand(
             @PathVariable String landId,
             @AuthenticationPrincipal TokenInfo tokenInfo
