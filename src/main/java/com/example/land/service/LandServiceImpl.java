@@ -196,4 +196,13 @@ public class LandServiceImpl implements LandService {
 
         return map;
     }
+
+    @Override
+    public Boolean getInterest(String landId, TokenInfo tokenInfo) {
+        Optional<Land> byId = landRepository.findById(UUID.fromString(landId));
+        Land land = byId.orElseThrow(() -> new IllegalArgumentException("landId is not exist"));
+        InterestLand byLandAndUserId = interestLandRepository.findByLandAndUserid(land, UUID.fromString(tokenInfo.id()));
+
+        return byLandAndUserId != null;
+    }
 }

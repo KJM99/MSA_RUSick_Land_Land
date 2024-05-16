@@ -37,4 +37,6 @@ public interface LandService {
     List<SellLogResponse> getMyLandPrice(TokenInfo tokenInfo);
 
     Map<UUID, Long> getLandsByUserIdForISale(List<UUID> idList);
+
+    Boolean getInterest(String landId, TokenInfo tokenInfo);
 }

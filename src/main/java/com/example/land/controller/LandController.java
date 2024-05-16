@@ -68,15 +68,21 @@ public class LandController {
     }
 
     // 관심 매물 등록 및 삭제
-    @PostMapping("/interests/{id}")
+    @PostMapping("{landId}/interests")
     public void addOrLandInterest(
-            @PathVariable String id,
+            @PathVariable String landId,
             @AuthenticationPrincipal TokenInfo tokenInfo
             ){
-        InterestLandRequest interestLandRequest = new InterestLandRequest(id,tokenInfo);
+        InterestLandRequest interestLandRequest = new InterestLandRequest(landId,tokenInfo);
         landService.addOrDeleteInterestedLand(interestLandRequest);
 
     }
+
+    @GetMapping("{landId}/interests")
+    public Boolean getInterest(@PathVariable("landId") String landId, @AuthenticationPrincipal TokenInfo tokenInfo){
+        return landService.getInterest(landId, tokenInfo);
+    }
+
 
     // 관심 매물 조회
     @GetMapping("/interests")
